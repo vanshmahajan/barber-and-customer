@@ -1,0 +1,85 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<pthread.h>
+#include<errno.h>
+#include<time.h>
+#include<semaphore.h>
+
+
+int C_count=0; 
+ sem_t M,C,B; /*Three semaphors   M-mutex   C-customer  B-barber */
+int N;
+time_t end_time;
+
+void *func_customer();
+void *func_barber();
+
+
+int main(int argc,char *argv[])
+{          
+         
+          printf(" ENTER THE NUMBER OF CHAIRS : ");
+		  scanf("%d",&N);    
+        pthread_t th1,th2;
+        int status=0;
+        end_time=time(NULL)+20;
+ 
+        
+        sem_init(&M,0,1);
+        sem_init(&C,0,0);
+        sem_init(&B,0,1);
+        
+        
+        status=pthread_create(&th1,NULL,func_barber,NULL);
+        if(status!=0)
+        {
+			perror(" BARBER NOT CREATED !\n");
+        }
+        status=pthread_create(&th2,NULL,func_customer,NULL);
+        if(status!=0)
+        {
+			perror(" CUSTOMER NOT CREATED !\n");
+        }
+        
+        pthread_join(th2,NULL);
+        pthread_join(th1,NULL);
+
+        exit(0);
+}
+
+void *func_barber()
+{
+        while(time(NULL)<end_time || C_count>0)
+        {
+                sem_wait(&C);            
+                sem_wait(&M);
+                C_count--;
+                printf("BARBER: -> count is:%d.\n",C_count);
+                sem_post(&M);
+                sem_post(&B);
+                sleep(3);       
+        }
+}
+
+void *func_customer()
+{
+        while(time(NULL)<end_time)
+        {
+                sem_wait(&M);
+                if(C_count<N)
+                {
+                        C_count++;
+                        printf("CUSTOMER: -> count is:%d\n",C_count);
+                        sem_post(&M);       
+                        sem_post(&C);           
+                        sem_wait(&B);           
+                }
+                else
+                        
+                        sem_post(&M);
+                sleep(1);
+        }
+}
+
+
