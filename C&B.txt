@@ -23,7 +23,7 @@ int main(int argc,char *argv[])
 		  scanf("%d",&N);    
         pthread_t th1,th2;
         int status=0;
-        end_time=time(NULL)+20;
+        end_time=time(NULL)+10;
  
         
         sem_init(&M,0,1);
@@ -48,19 +48,7 @@ int main(int argc,char *argv[])
         exit(0);
 }
 
-void *func_barber()
-{
-        while(time(NULL)<end_time || C_count>0)
-        {
-                sem_wait(&C);            
-                sem_wait(&M);
-                C_count--;
-                printf("BARBER: -> count is:%d.\n",C_count);
-                sem_post(&M);
-                sem_post(&B);
-                sleep(3);       
-        }
-}
+
 
 void *func_customer()
 {
@@ -70,7 +58,7 @@ void *func_customer()
                 if(C_count<N)
                 {
                         C_count++;
-                        printf("CUSTOMER: -> count is:%d\n",C_count);
+                        printf("CUSTOMER: COUNT IS INCREMENTED -> COUNT IS :%d\n",C_count);
                         sem_post(&M);       
                         sem_post(&C);           
                         sem_wait(&B);           
@@ -82,4 +70,17 @@ void *func_customer()
         }
 }
 
+void *func_barber()
+{
+        while(time(NULL)<end_time || C_count>0)
+        {
+                sem_wait(&C);            
+                sem_wait(&M);
+                C_count--;
+                printf("BARBER: COUNT IS DECREMENTED -> COUNT IS :%d.\n",C_count);
+                sem_post(&M);
+                sem_post(&B);
+                sleep(3);       
+        }
+}
 
