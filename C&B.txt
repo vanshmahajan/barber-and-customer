@@ -58,7 +58,7 @@ void *func_customer()
                 if(C_count<N)
                 {
                         C_count++;
-                        printf("CUSTOMER: COUNT IS INCREMENTED -> COUNT IS :%d\n",C_count);
+                        printf("CUSTOMER: COUNT IS INCREMENTED -> \t COUNT IS :%d       CUSTOMER ENTERED \n",C_count);
                         sem_post(&M);       
                         sem_post(&C);           
                         sem_wait(&B);           
@@ -77,7 +77,7 @@ void *func_barber()
                 sem_wait(&C);            
                 sem_wait(&M);
                 C_count--;
-                printf("BARBER: COUNT IS DECREMENTED -> COUNT IS :%d.\n",C_count);
+                printf("BARBER: COUNT IS DECREMENTED   -> \t COUNT IS :%d       BARBER CUT HAIR      \n",C_count);
                 sem_post(&M);
                 sem_post(&B);
                 sleep(3);       
