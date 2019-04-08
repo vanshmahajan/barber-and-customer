@@ -8,9 +8,9 @@
 
 
 int C_count=0; 
- sem_t M,C,B; /*Three semaphors   M-mutex   C-customer  B-barber */
+ sem_t M,C,B;       /*Three semaphors        M-mutex   C-customer  B-barber */
 int N;
-time_t end_time;
+time_t end_time;          // end time
 
 void *func_customer();
 void *func_barber();
